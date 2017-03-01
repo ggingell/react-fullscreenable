@@ -1,0 +1,375 @@
+jest.mock('fullscreen');
+
+import React, { PropTypes } from 'react';
+
+import { mount } from 'enzyme';
+import deepEqual from 'deep-equal';
+
+import Fullscreenable from '../src/';
+
+const TestComponent = (props) => {
+    return (
+        <div className="test-component">
+            <button className="toggle-button" onClick={props.toggleFullscreen}>
+                Enter Fullscreen
+            </button>
+            <div className="flag">{props.isFullscreen}</div>
+        </div>
+    );
+}
+TestComponent.propTypes = {
+    toggleFullscreen: PropTypes.func,
+    isFullscreen: PropTypes.bool
+}
+
+
+describe('Fullscreenable when native fullscreen is enabled and available', () => {
+
+    beforeEach(() => {
+        jest.resetAllMocks();
+        const mocked = require('fullscreen');
+        mocked.__resetListeners();
+        mocked.__setAvailable(true);
+        mocked.__setEnabled(true);
+    });
+
+    it('should provide a function as its default export', () => {
+        expect(Fullscreenable).toBeInstanceOf(Function);
+    });
+
+    it('should compose a display name based on the wrapped component', () => {
+        let EnhancedComponent = Fullscreenable()(TestComponent);
+        expect(EnhancedComponent.displayName).toBe("Fullscreenable(TestComponent)");
+    });
+
+    it('should add three props to the wrapped component', () => {
+        let EnhancedComponent = Fullscreenable()(TestComponent);
+        const wrapper = mount(<EnhancedComponent />);
+        const wrappedComponent = wrapper.children().first();
+        const enhancedProps = wrappedComponent.props();
+
+        expect(enhancedProps.toggleFullscreen).toBeDefined();
+        expect(enhancedProps.toggleFullscreen).not.toBeNull();
+
+        // Fullscreen is enabled by default in most browsers.(And in our mock)
+        expect(enhancedProps.toggleFullscreen).toBeInstanceOf(Function);
+        expect(enhancedProps.isFullscreen).toBe(false);
+
+        expect(enhancedProps.viewportDimensions).toBeNull();
+
+    });
+
+    it('should pass other props along', () => {
+        let EnhancedComponent = Fullscreenable()(TestComponent);
+        const unrelatedProp = { testing: true, leaveMeAlone: true };
+        const wrapper = mount(<EnhancedComponent unrelatedProp={unrelatedProp}/>);
+        const wrappedComponent = wrapper.children().first();
+        const enhancedProps = wrappedComponent.props();
+
+        expect(deepEqual(enhancedProps.unrelatedProp, unrelatedProp)).toBe(true);
+
+    });
+
+    it('should have appropriate classes on its root node', () => {
+        let EnhancedComponent = Fullscreenable()(TestComponent);
+        const wrapper = mount(<EnhancedComponent />);
+
+        expect(wrapper.hasClass('fullscreenable')).toBe(true);
+        expect(wrapper.hasClass('fullscreen')).toBe(false);
+        expect(wrapper.hasClass('fullscreen_disabled')).toBe(false);
+    });
+
+    it('should request fullscreen when toggleFullscreen is called and update props once reached', function(done) {
+        let EnhancedComponent = Fullscreenable()(TestComponent);
+        const wrapper = mount(<EnhancedComponent />);
+        const toggleButton = wrapper.find('.toggle-button');
+
+        expect(toggleButton).toBeDefined();
+        toggleButton.simulate('click');
+
+        setTimeout(function() {
+
+            wrapper.update();
+
+            const wrappedComponent = wrapper.children().first();
+            const enhancedProps = wrappedComponent.props();
+
+            expect(enhancedProps.isFullscreen).toBe(true);
+
+            done();
+
+        }, 300);
+    });
+
+    it('should release fullscreen when toggleFullscreen is called', function(done) {
+        let EnhancedComponent = Fullscreenable()(TestComponent);
+        const wrapper = mount(<EnhancedComponent />);
+        const toggleButton = wrapper.find('.toggle-button');
+
+        toggleButton.simulate('click');
+
+        setTimeout(function() {
+
+            const wrappedComponent = wrapper.children().first();
+            const enhancedProps = wrappedComponent.props();
+
+            expect(enhancedProps.isFullscreen).toBe(true);
+
+            toggleButton.simulate('click');
+
+            setTimeout(function() {
+
+                wrapper.update();
+
+                const wrappedComponent = wrapper.children().first();
+                const enhancedProps = wrappedComponent.props();
+
+                expect(enhancedProps.isFullscreen).toBe(false);
+
+                done();
+            }, 300);
+        }, 300);
+    });
+});
+
+describe('Fullscreenable when an error occurs', () => {
+
+    beforeEach(() => {
+        jest.resetAllMocks();
+        const mocked = require('fullscreen');
+        mocked.__resetListeners();
+        mocked.__setAvailable(true);
+        mocked.__setEnabled(true);
+        mocked.__setSimulateError(true);
+    });
+
+    it('should handle not being provided an onError callback', function(done) {
+        let EnhancedComponent = Fullscreenable()(TestComponent);
+
+        const wrapper = mount(<EnhancedComponent />);
+        const toggleButton = wrapper.find('.toggle-button');
+
+        toggleButton.simulate('click');
+
+        wrapper.update();
+
+        setTimeout(() => {
+            const wrappedComponent = wrapper.children().first();
+            const enhancedProps = wrappedComponent.props();
+            expect(enhancedProps.isFullscreen).toBe(false);
+            done();
+        }, 12);
+    });
+
+    it('should call the onError callback', function(done) {
+        const errorCbSpy = jest.fn();
+        let EnhancedComponent = Fullscreenable({
+            onError: errorCbSpy
+        })(TestComponent);
+
+        const wrapper = mount(<EnhancedComponent />);
+        const toggleButton = wrapper.find('.toggle-button');
+
+        toggleButton.simulate('click');
+
+        wrapper.update();
+
+        setTimeout(() => {
+            const wrappedComponent = wrapper.children().first();
+            const enhancedProps = wrappedComponent.props();
+            expect(errorCbSpy).toHaveBeenCalled();
+            expect(errorCbSpy.mock.calls[0][0]).toBeInstanceOf(Error);
+            expect(enhancedProps.isFullscreen).toBe(false);
+            done();
+        }, 12);
+    });
+});
+
+describe('Fullscreenable when unmounted', () => {
+
+    it('should call .dispose() on this.fs', () => {
+        jest.resetAllMocks();
+        const mocked = require('fullscreen');
+        mocked.__resetListeners();
+        mocked.__setAvailable(true);
+        mocked.__setEnabled(true);
+
+        const disposeSpy = mocked.__getDisposeMock();
+
+        let EnhancedComponent = Fullscreenable()(TestComponent);
+        const wrapper = mount(<EnhancedComponent />);
+
+        wrapper.unmount();
+
+        expect(disposeSpy).toHaveBeenCalled();
+    });
+});
+
+describe('Fullscreenable when fullscreen is not available', () => {
+
+    beforeEach(() => {
+        const mocked = require('fullscreen');
+        mocked.__resetListeners();
+        mocked.__setAvailable(false);
+        mocked.__setEnabled(false);
+        window.innerHeight = 768;
+        window.innerWidth = 1024;
+    });
+
+    it('should have fullscreen_disabled class on its root node', () => {
+        let EnhancedComponent = Fullscreenable()(TestComponent);
+        const wrapper = mount(<EnhancedComponent />);
+
+        expect(wrapper.hasClass('fullscreenable')).toBe(true);
+        expect(wrapper.hasClass('fullscreen')).toBe(false);
+        expect(wrapper.hasClass('fullscreen_disabled')).toBe(true);
+    });
+
+
+    it('should enter pseudo fullscreen when toggleFullscreen is called and update state immediately', function() {
+        let EnhancedComponent = Fullscreenable()(TestComponent);
+        const wrapper = mount(<EnhancedComponent />);
+        const toggleButton = wrapper.find('.toggle-button');
+
+        toggleButton.simulate('click');
+
+        wrapper.update();
+
+        const wrappedComponent = wrapper.children().first();
+        const enhancedProps = wrappedComponent.props();
+
+        expect(enhancedProps.isFullscreen).toBe(true);
+        expect(enhancedProps.viewportDimensions).toEqual({width: 1024, height: 768});
+
+    });
+
+    it('should have appropriate classes when in pseudo fullscreen', function() {
+        let EnhancedComponent = Fullscreenable()(TestComponent);
+        const wrapper = mount(<EnhancedComponent />);
+        const toggleButton = wrapper.find('.toggle-button');
+
+        toggleButton.simulate('click');
+
+        wrapper.update();
+
+        expect(wrapper.hasClass('fullscreenable')).toBe(true);
+        expect(wrapper.hasClass('fullscreen')).toBe(true);
+        expect(wrapper.hasClass('fullscreen_disabled')).toBe(true);
+        expect(wrapper.hasClass('fullscreen_pseudo')).toBe(true);
+
+    });
+
+    it('should swallow TouchMove events when in pseudo fullscreen (call preventDefault())', function() {
+        let EnhancedComponent = Fullscreenable()(TestComponent);
+        const wrapper = mount(<EnhancedComponent />);
+        const toggleButton = wrapper.find('.toggle-button');
+
+        const touchMovePrevDefaultSpy = jest.fn();
+
+        toggleButton.simulate('click');
+
+        wrapper.update();
+
+        wrapper.simulate('touchmove', {
+            preventDefault: touchMovePrevDefaultSpy
+        });
+
+        expect(touchMovePrevDefaultSpy).toHaveBeenCalled();
+
+    });
+
+    it('should release pseudo fullscreen when toggleFullscreen is called', () => {
+        let EnhancedComponent = Fullscreenable()(TestComponent);
+        const wrapper = mount(<EnhancedComponent />);
+        const toggleButton = wrapper.find('.toggle-button');
+
+        toggleButton.simulate('click');
+
+        // Update wrapper to be in pseudo fullscreen effect
+        wrapper.update();
+
+        let wrappedComponent = wrapper.children().first();
+        let enhancedProps = wrappedComponent.props();
+
+        expect(enhancedProps.isFullscreen).toBe(true);
+        expect(enhancedProps.viewportDimensions).toEqual({width: 1024, height: 768});
+
+        toggleButton.simulate('click');
+
+        wrapper.update();
+
+        wrappedComponent = wrapper.children().first();
+        enhancedProps = wrappedComponent.props();
+
+        expect(enhancedProps.isFullscreen).toBe(false);
+        expect(enhancedProps.viewportDimensions).toEqual(null);
+    });
+
+    it('should call setState when its handleWinResize is called', () => {
+        let EnhancedComponent = Fullscreenable()(TestComponent);
+        const wrapper = mount(<EnhancedComponent />);
+        const toggleButton = wrapper.find('.toggle-button');
+        const inst = wrapper.instance();
+        const setStateSpy = jest.fn();
+        inst.setState = setStateSpy;
+
+        toggleButton.simulate('click');
+
+        // Update wrapper to be in pseudo fullscreen effect
+        wrapper.update();
+
+        inst.handleResize();
+
+        wrapper.update();
+
+        expect(setStateSpy).toHaveBeenCalled();
+    });
+
+    it('should call setState when its handleOrntChange is called', () => {
+        let EnhancedComponent = Fullscreenable()(TestComponent);
+        const wrapper = mount(<EnhancedComponent />);
+        const toggleButton = wrapper.find('.toggle-button');
+        const inst = wrapper.instance();
+        const setStateSpy = jest.fn();
+        inst.setState = setStateSpy;
+
+        const spyRaf = jest.fn();
+        global.requestAnimationFrame = spyRaf;
+
+        toggleButton.simulate('click');
+
+        // Update wrapper to be in pseudo fullscreen effect
+        wrapper.update();
+
+        inst.handleOrntChange();
+
+        wrapper.update();
+
+        expect(spyRaf).toHaveBeenCalled();
+        expect(setStateSpy).toHaveBeenCalled();
+        expect(setStateSpy.mock.calls[0][0]).toEqual({
+            "isPseudoFullscreen": true,
+            "viewportDimensions": {"height": 768, "width": 1024}
+        });
+    });
+});
+
+describe('Fullscreenable when fullscreen is not enabled', () => {
+
+    beforeEach(() => {
+        jest.resetAllMocks();
+        const mocked = require('fullscreen');
+        mocked.__resetListeners();
+        mocked.__setAvailable(true);
+        mocked.__setEnabled(false);
+    });
+
+    it('should have class fullscreen_disabled on its root node', () => {
+        let EnhancedComponent = Fullscreenable()(TestComponent);
+        const wrapper = mount(<EnhancedComponent />);
+
+        expect(wrapper.hasClass('fullscreenable')).toBe(true);
+        expect(wrapper.hasClass('fullscreen')).toBe(false);
+        expect(wrapper.hasClass('fullscreen_disabled')).toBe(true);
+    });
+});

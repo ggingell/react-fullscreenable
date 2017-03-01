@@ -1,0 +1,66 @@
+
+body {
+    font-family: Consolas, monospace;
+}
+
+/* This node is where React renders itself. */
+#stage {
+    background: #EEE;
+    padding: 1em;
+}
+
+.demo-component {
+    /* border-box is required in order to compensate for border and padding. */
+    box-sizing: border-box;
+
+    /* Without setting width and height to 100% the component will
+     *   be centered in the window at the same dimensions as it was prior
+     *   to entering fullscreen.
+     */
+    height: 100%;
+    width: 100%;
+
+    /* These rest of these rules just help with visualizing the component's behavior.
+     * The border helps visually identify the edges of the component.
+     *
+     */
+    border: 10px dotted #0074E4;
+    color: #0074E4;
+    padding: 1em;
+    margin-bottom: 1em;
+}
+
+.demo-component button {
+    background: #0074E4;
+    color: #FFF;
+    border: 1px solid #0074E4;
+    border-radius: 3px;
+    padding: 1em 2em;
+}
+
+.filler-content {
+    height: 150vh;
+    background: #EEE;
+}
+
+/* Fullscreenable root node classes.
+ *
+ * You can use these rules with the .fullscreenable wrapper. By default the
+ * component sets the .fullscreenable div's height and width to 100% when
+ * it reaches fullscreen and then removes it on exit. This is necessary
+ * to allow the contained component to cover the entire screen.
+ */
+.fullscreenable {}
+
+/* The fullscreen class is added when the component is in native fullscreen. */
+.fullscreenable.fullscreen {}
+
+/* Added when native fullscreen is disabled. */
+.fullscreenable.fullscreen_disabled {}
+
+/* Added when the component is in pseudo fullscreen. */
+.fullscreenable.fullscreen_pseudo {
+    /* A background color is required for pseudo-fullscreen, otherwise the
+    page will be visible behind the fullscreen component's contents. */
+    background: #FFF;
+}
