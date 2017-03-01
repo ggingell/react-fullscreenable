@@ -10,41 +10,41 @@ Make these changes in the component you want to enhance with fullscreen. In thes
 
 1. Import `fullscreenable`. (See [./example/DemoComponent.js](./example/DemoComponent.js))
 
-```javascript
-import fullscreenable from 'react-fullscreenable';
-```
+    ```javascript
+    import fullscreenable from 'react-fullscreenable';
+    ```
 
 
 2. Add the props `isFullscreen`, `toggleFullscreen` and `viewportDimensions`. `forcePseudoFullscreen` will also be passed down if it was passed into the enhanced component.
 
 
-```javascript
-DemoComponent.propTypes = {
-    isFullscreen: PropTypes.bool,
-    toggleFullscreen: PropTypes.func
-};
-```
+    ```javascript
+    DemoComponent.propTypes = {
+        isFullscreen: PropTypes.bool,
+        toggleFullscreen: PropTypes.func
+    };
+    ```
 
 3. Use the `toggleFullscreen` prop on a button or other node in the render method.
 
-```javascript
-<button onClick={this.props.toggleFullscreen}>Fullscreen</button>
-```
+    ```javascript
+    <button onClick={this.props.toggleFullscreen}>Fullscreen</button>
+    ```
 
 4. Enhance the component with `fullscreenable` and export it however it makes sense for you.
 
-```javascript
-const FullscreenableDemoComponent = fullscreenable()(DemoComponent);
+    ```javascript
+    const FullscreenableDemoComponent = fullscreenable()(DemoComponent);
 
-// You could also make this a named export instead of the default if you want the flexibility to use the component with or without the fullscreen enhancement.
-export default FullscreenableDemoComponent;
-```
+    // You could also make this a named export instead of the default if you want the flexibility to use the component with or without the fullscreen enhancement.
+    export default FullscreenableDemoComponent;
+    ```
 
 5. Simply import and use your component the same way as you normally would. (See [./example/demo.js](./example/demo.js))
 
-```javascript
-import DemoComponent from '../path/to/DemoComponent';
-```
+    ```javascript
+    import DemoComponent from '../path/to/DemoComponent';
+    ```
 
 Also take a look at [./example/demo.css](./example/demo.css). No CSS is required for this component to function
 correctly. However you will probably want rules for some child elements.
