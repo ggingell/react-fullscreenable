@@ -98,7 +98,7 @@ describe('Fullscreenable when native fullscreen is enabled and available', () =>
 
             done();
 
-        }, 300);
+        }, 515);
     });
 
     it('should release fullscreen when toggleFullscreen is called', function(done) {
@@ -127,8 +127,8 @@ describe('Fullscreenable when native fullscreen is enabled and available', () =>
                 expect(enhancedProps.isFullscreen).toBe(false);
 
                 done();
-            }, 300);
-        }, 300);
+            }, 515);
+        }, 515);
     });
 });
 

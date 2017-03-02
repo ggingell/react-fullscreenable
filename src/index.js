@@ -68,7 +68,7 @@ export default function withFullscreen({
                             isFullscreen: true,
                             viewportDimensions: getViewportDimensions()
                         });
-                    }, 250);
+                    }, 500);
                 });
 
                 emitter.on('release', () => {
