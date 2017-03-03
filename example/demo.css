@@ -30,6 +30,13 @@ body {
     margin-bottom: 1em;
 }
 
+/* You will almost certainly want to be able to scroll the content inside
+ * your component if it extends off screen (long text for example).
+ */
+.fullscreen .demo-component {
+    overflow-y: scroll;
+}
+
 .demo-component button {
     background: #0074E4;
     color: #FFF;

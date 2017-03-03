@@ -6,13 +6,9 @@ import { findDOMNode } from 'react-dom';
 import getDisplayName from 'react-display-name';
 import classNames from 'classnames';
 
+import getViewportDimensions from './getViewportDimensions';
+
 const noop = () => {};
-const getViewportDimensions = () => {
-    return {
-        width: window.innerWidth,
-        height: window.innerHeight
-    };
-};
 
 export default function withFullscreen({
         onError = noop
@@ -29,6 +25,7 @@ export default function withFullscreen({
 
                 this.handleResize = this.handleResize.bind(this);
                 this.handleOrntChange = this.handleOrntChange.bind(this);
+                this.squelchTouchMove = this.squelchTouchMove.bind(this);
 
                 const isAvailable = fullscreen.available();
                 const isEnabled = fullscreen.enabled();
@@ -38,7 +35,8 @@ export default function withFullscreen({
                     isAvailable,
                     isEnabled,
                     isNativeCapable: (isAvailable && isEnabled),
-                    viewportDimensions: null
+                    viewportDimensions: null,
+                    scrollYStart: 0
                 };
             }
 
@@ -106,18 +104,24 @@ export default function withFullscreen({
                         window.addEventListener('resize', this.handleResize);
                         window.addEventListener('orientationchange', this.handleOrntChange);
 
+                        window.scrollTo(0, 0);
+
                         this.setState({
                             isPseudoFullscreen: true,
-                            viewportDimensions: getViewportDimensions()
+                            viewportDimensions: getViewportDimensions(),
+                            scrollYStart: window.scrollY
                         });
                     },
                     release: () => {
                         window.removeEventListener('resize', this.handleResize);
                         window.removeEventListener('orientationchange', this.handleOrntChange);
 
+                        window.scrollTo(0, this.state.scrollYStart);
+
                         this.setState({
                             isPseudoFullscreen: false,
-                            viewportDimensions: null
+                            viewportDimensions: null,
+                            scrollYStart: 0
                         });
                     },
                     // noop for now. May be useful if event listeners are ever required
@@ -127,13 +131,19 @@ export default function withFullscreen({
             }
 
             handleResize() {
+
+                window.scrollTo(0, 0);
                 this.setState({
                     viewportDimensions: getViewportDimensions()
                 });
             }
 
             handleOrntChange() {
-                global.requestAnimationFrame(this.handleResize);
+                // On iPhone/iPad the orientationchange event is fired at the
+                // start of the rotation. The window.inner* dimension values
+                // are not correct until after the animation completes.
+                // So we wait.
+                setTimeout(this.handleResize, 400);
             }
 
             componentWillUnmount() {
@@ -161,6 +171,19 @@ export default function withFullscreen({
                 // This will not interfere with touchMove listeners attached to
                 // immediate children.
                 event.preventDefault();
+
+                // If the user taps the top of the screen on an iPad or iPhone
+                // this can trigger the URL bar to show. However this does not
+                // fire a resize event. Instead, we check window size on
+                // movement to see if it has changed.
+                const dims = this.state.viewportDimensions;
+                const newDims = getViewportDimensions();
+
+                if (dims) {
+                    if (dims.height !== newDims.height || dims.width !== newDims.width) {
+                        this.handleResize();
+                    }
+                }
             }
 
             render() {
@@ -185,7 +208,7 @@ export default function withFullscreen({
                     style = {
                         height: viewportDimensions.height,
                         width: viewportDimensions.width,
-                        position: 'fixed',
+                        position: 'absolute',
                         top: '0',
                         right: '0',
                         left: '0'

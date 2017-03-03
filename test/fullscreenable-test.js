@@ -1,5 +1,9 @@
 jest.mock('fullscreen');
 
+jest.mock('../src/getViewportDimensions', () => {
+    return jest.fn();
+});
+
 import React, { PropTypes } from 'react';
 
 import { mount } from 'enzyme';
@@ -206,14 +210,17 @@ describe('Fullscreenable when unmounted', () => {
 });
 
 describe('Fullscreenable when fullscreen is not available', () => {
+    let mockGetVD;
 
     beforeEach(() => {
+        jest.resetAllMocks();
         const mocked = require('fullscreen');
         mocked.__resetListeners();
         mocked.__setAvailable(false);
         mocked.__setEnabled(false);
-        window.innerHeight = 768;
-        window.innerWidth = 1024;
+        mockGetVD = require('../src/getViewportDimensions');
+        mockGetVD.mockReturnValue({width: 1024, height: 768});
+
     });
 
     it('should have fullscreen_disabled class on its root node', () => {
@@ -278,6 +285,28 @@ describe('Fullscreenable when fullscreen is not available', () => {
 
     });
 
+    it('should check if window size changed in TouchMove handler (iOS Devices do not fire when URL bar is shown)', function() {
+        let EnhancedComponent = Fullscreenable()(TestComponent);
+        const wrapper = mount(<EnhancedComponent />);
+        const toggleButton = wrapper.find('.toggle-button');
+        const inst = wrapper.instance();
+        const setStateSpy = jest.spyOn(inst, 'setState');
+
+        toggleButton.simulate('click');
+
+        wrapper.update();
+
+        mockGetVD.mockReturnValue({"height": 1440, "width": 2560});
+
+        wrapper.simulate('touchmove');
+
+        wrapper.update();
+
+        expect(setStateSpy).toHaveBeenCalledTimes(2);
+
+        expect(setStateSpy.mock.calls[1][0]).toEqual({ "viewportDimensions": {"height": 1440, "width": 2560} });
+    });
+
     it('should release pseudo fullscreen when toggleFullscreen is called', () => {
         let EnhancedComponent = Fullscreenable()(TestComponent);
         const wrapper = mount(<EnhancedComponent />);
@@ -305,7 +334,7 @@ describe('Fullscreenable when fullscreen is not available', () => {
         expect(enhancedProps.viewportDimensions).toEqual(null);
     });
 
-    it('should call setState when its handleWinResize is called', () => {
+    it('should call setState in handleResize if the window size has changed', () => {
         let EnhancedComponent = Fullscreenable()(TestComponent);
         const wrapper = mount(<EnhancedComponent />);
         const toggleButton = wrapper.find('.toggle-button');
@@ -320,12 +349,18 @@ describe('Fullscreenable when fullscreen is not available', () => {
 
         inst.handleResize();
 
+        // Simulate the window getting larger
+        mockGetVD.mockReturnValue({"height": 1440, "width": 900})
+
+        inst.handleResize();
+
         wrapper.update();
 
-        expect(setStateSpy).toHaveBeenCalled();
+        expect(setStateSpy).toHaveBeenCalledTimes(3);
+        expect(setStateSpy.mock.calls[2][0]).toEqual({ "viewportDimensions": {"height": 1440, "width": 900} });
     });
 
-    it('should call setState when its handleOrntChange is called', () => {
+    it('should call setState when its handleOrntChange is called', function(done) {
         let EnhancedComponent = Fullscreenable()(TestComponent);
         const wrapper = mount(<EnhancedComponent />);
         const toggleButton = wrapper.find('.toggle-button');
@@ -333,24 +368,23 @@ describe('Fullscreenable when fullscreen is not available', () => {
         const setStateSpy = jest.fn();
         inst.setState = setStateSpy;
 
-        const spyRaf = jest.fn();
-        global.requestAnimationFrame = spyRaf;
-
         toggleButton.simulate('click');
 
         // Update wrapper to be in pseudo fullscreen effect
         wrapper.update();
 
+        mockGetVD.mockReturnValue({"height": 1024, "width": 768})
+
         inst.handleOrntChange();
 
-        wrapper.update();
+        setTimeout(function() {
+            wrapper.update();
 
-        expect(spyRaf).toHaveBeenCalled();
-        expect(setStateSpy).toHaveBeenCalled();
-        expect(setStateSpy.mock.calls[0][0]).toEqual({
-            "isPseudoFullscreen": true,
-            "viewportDimensions": {"height": 768, "width": 1024}
-        });
+            expect(setStateSpy).toHaveBeenCalledTimes(2);
+            expect(setStateSpy.mock.calls[1][0]).toEqual({ "viewportDimensions": {"height": 1024, "width": 768} });
+
+            done();
+        }, 416);
     });
 });
 
