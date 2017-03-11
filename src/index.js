@@ -7,6 +7,9 @@ import getDisplayName from 'react-display-name';
 import classNames from 'classnames';
 
 import getViewportDimensions from './getViewportDimensions';
+const CAN_HAS_DOM = (typeof window !== 'undefined'
+                     && window.document
+                     && window.document.createElement);
 
 const noop = () => {};
 
@@ -19,6 +22,13 @@ export default function withFullscreen({
         class Fullscreenable extends Component {
             constructor(props) {
                 super(props);
+                let isAvailable;
+                let isEnabled;
+
+                if (CAN_HAS_DOM) {
+                    isAvailable = fullscreen.available();
+                    isEnabled = fullscreen.enabled();
+                }
 
                 this.handleRootNodeRef = this.handleRootNodeRef.bind(this);
                 this.onFullscreenClick = this.onFullscreenClick.bind(this);
@@ -26,9 +36,6 @@ export default function withFullscreen({
                 this.handleResize = this.handleResize.bind(this);
                 this.handleOrntChange = this.handleOrntChange.bind(this);
                 this.squelchTouchMove = this.squelchTouchMove.bind(this);
-
-                const isAvailable = fullscreen.available();
-                const isEnabled = fullscreen.enabled();
 
                 this.state = {
                     isFullscreen: false,
