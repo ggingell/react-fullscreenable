@@ -35,7 +35,7 @@ export default function withFullscreen({
 
                 this.handleResize = this.handleResize.bind(this);
                 this.handleOrntChange = this.handleOrntChange.bind(this);
-                this.squelchTouchMove = this.squelchTouchMove.bind(this);
+                this.listenTouchMove = this.listenTouchMove.bind(this);
 
                 this.state = {
                     isFullscreen: false,
@@ -111,24 +111,34 @@ export default function withFullscreen({
                         window.addEventListener('resize', this.handleResize);
                         window.addEventListener('orientationchange', this.handleOrntChange);
 
+                        const scrawly = window.scrollY;
+
                         window.scrollTo(0, 0);
+
+                        this.bodyPosOrig = window.document.body.style.position;
+                        this.bodyMarginOrig = window.document.body.style.margin;
+                        window.document.body.style.position = 'fixed';
+                        window.document.body.style.margin = '0';
 
                         this.setState({
                             isPseudoFullscreen: true,
                             viewportDimensions: getViewportDimensions(),
-                            scrollYStart: window.scrollY
+                            scrollYStart: scrawly
                         });
                     },
                     release: () => {
                         window.removeEventListener('resize', this.handleResize);
                         window.removeEventListener('orientationchange', this.handleOrntChange);
 
+                        window.document.body.style.position = this.bodyPosOrig || '';
+                        window.document.body.style.margin = this.bodyMarginOrig;
+
                         window.scrollTo(0, this.state.scrollYStart);
 
                         this.setState({
                             isPseudoFullscreen: false,
                             viewportDimensions: null,
-                            scrollYStart: 0
+                            scrollYStart: this.state.scrollYStart
                         });
                     },
                     // noop for now. May be useful if event listeners are ever required
@@ -174,15 +184,15 @@ export default function withFullscreen({
                 }
             }
 
-            squelchTouchMove(event) {
-                // This will not interfere with touchMove listeners attached to
-                // immediate children.
-                event.preventDefault();
+            listenTouchMove() {
 
                 // If the user taps the top of the screen on an iPad or iPhone
                 // this can trigger the URL bar to show. However this does not
                 // fire a resize event. Instead, we check window size on
                 // movement to see if it has changed.
+                // If you don't want this to happen, you can call
+                // event.stopPropagation(); in your own listener on a child node
+                // and this handler won't see it.
                 const dims = this.state.viewportDimensions;
                 const newDims = getViewportDimensions();
 
@@ -208,16 +218,17 @@ export default function withFullscreen({
                     'fullscreen_pseudo': isPseudoFullscreen
                 });
 
-                let squelchTouchMove;
+                let listenTouchMove;
                 let style = null;
                 if (isPseudoFullscreen) {
-                    squelchTouchMove = this.squelchTouchMove;
+                    listenTouchMove = this.listenTouchMove;
                     style = {
                         height: viewportDimensions.height,
                         width: viewportDimensions.width,
                         position: 'absolute',
                         top: '0',
                         right: '0',
+                        bottom: '0',
                         left: '0'
                     }
                 }
@@ -225,7 +236,7 @@ export default function withFullscreen({
                 return (
                     <div className={wrapperClass}
                          style={style}
-                         onTouchMove={squelchTouchMove}
+                         onTouchMove={listenTouchMove}
                          ref={this.handleRootNodeRef}>
                         <WrappedComponent {...this.props}
                                           toggleFullscreen={this.onFullscreenClick}

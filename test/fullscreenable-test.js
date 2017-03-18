@@ -266,24 +266,24 @@ describe('Fullscreenable when fullscreen is not available', () => {
 
     });
 
-    it('should swallow TouchMove events when in pseudo fullscreen (call preventDefault())', function() {
-        let EnhancedComponent = Fullscreenable()(TestComponent);
-        const wrapper = mount(<EnhancedComponent />);
-        const toggleButton = wrapper.find('.toggle-button');
+    // it('should swallow TouchMove events when in pseudo fullscreen (call preventDefault())', function() {
+    //     let EnhancedComponent = Fullscreenable()(TestComponent);
+    //     const wrapper = mount(<EnhancedComponent />);
+    //     const toggleButton = wrapper.find('.toggle-button');
 
-        const touchMovePrevDefaultSpy = jest.fn();
+    //     const touchMovePrevDefaultSpy = jest.fn();
 
-        toggleButton.simulate('click');
+    //     toggleButton.simulate('click');
 
-        wrapper.update();
+    //     wrapper.update();
 
-        wrapper.simulate('touchmove', {
-            preventDefault: touchMovePrevDefaultSpy
-        });
+    //     wrapper.simulate('touchmove', {
+    //         preventDefault: touchMovePrevDefaultSpy
+    //     });
 
-        expect(touchMovePrevDefaultSpy).toHaveBeenCalled();
+    //     expect(touchMovePrevDefaultSpy).toHaveBeenCalled();
 
-    });
+    // });
 
     it('should check if window size changed in TouchMove handler (iOS Devices do not fire when URL bar is shown)', function() {
         let EnhancedComponent = Fullscreenable()(TestComponent);
