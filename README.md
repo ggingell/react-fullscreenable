@@ -4,6 +4,10 @@
 
 Recent changes:
 
+* **v2.2.0** - Component now sets body style to prevent scrolling document in background.
+             - Fixed issue where TouchMove events that made it to the component would be prevented,
+                    which caused jitter during native scroll.
+             - Fixed bug where scrollY was not restored in pseudo fullscreen.
 * **v2.1.1** - Now Universal. Added DOM check before checking if native fullscreen is available on document.
 
 ## Usage
