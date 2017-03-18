@@ -6,7 +6,7 @@
   "license": "ISC",
   "main": "lib/index.js",
   "scripts": {
-    "start": "budo example/demo.js:browserified/demo.js --dir example --onupdate \"npm run lint --silent && jest\" --watch-glob \"**/*.{html,css,js}\" --open --live -- -t [ babelify ] --sourceType module",
+    "start": "budo example/demo.js:browserified/demo.js --dir example --onupdate \"npm run build\" --watch-glob \"**/*.{html,css,js}\" --open --live -- -t [ babelify ] --sourceType module",
     "pretest": "npm run lint",
     "clean": "rimraf lib",
     "prebuild": "npm run clean && npm run lint && npm run test",
