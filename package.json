@@ -1,6 +1,6 @@
 {
   "name": "react-fullscreenable",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "description": "React higher order component that provides fullscreen API to the enhanced component",
   "author": "Grant Gingell <grantgi@zillowgroup.com>",
   "license": "ISC",
