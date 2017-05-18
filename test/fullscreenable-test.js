@@ -4,9 +4,8 @@ jest.mock('../src/getViewportDimensions', () => {
     return jest.fn();
 });
 
-import PropTypes from 'prop-types';
-
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { mount } from 'enzyme';
 import deepEqual from 'deep-equal';

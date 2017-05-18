@@ -1,7 +1,7 @@
-import PropTypes from 'prop-types';
 /* eslint-disable no-return-assign */
 
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import fullscreen from 'fullscreen';
 import { findDOMNode } from 'react-dom';
 import getDisplayName from 'react-display-name';
