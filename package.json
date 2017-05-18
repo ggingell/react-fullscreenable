@@ -58,7 +58,8 @@
     "prop-types": "^15.5.8",
     "react": "^15.4.2",
     "react-addons-test-utils": "^15.4.2",
-    "react-dom": "^15.4.2",
+    "react-dom": "^15.5.4",
+    "react-test-renderer": "^15.5.4",
     "rimraf": "^2.6.1"
   },
   "dependencies": {
