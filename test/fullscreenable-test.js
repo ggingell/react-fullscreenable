@@ -262,7 +262,6 @@ describe('Fullscreenable when fullscreen is not available', () => {
         expect(wrapper.hasClass('fullscreen_disabled')).toBe(true);
     });
 
-
     it('should enter pseudo fullscreen when toggleFullscreen is called and update state immediately', function() {
         let EnhancedComponent = Fullscreenable()(TestComponent);
         const wrapper = mount(<EnhancedComponent />);
@@ -415,6 +414,24 @@ describe('Fullscreenable when fullscreen is not available', () => {
 
             done();
         }, 416);
+    });
+
+    it('should immediately call fullscreen.request() if isPseudoFullscreen prop is passed as true', function (done) {
+        let EnhancedComponent = Fullscreenable()(TestComponent);
+        const wrapper = mount(<EnhancedComponent isPseudoFullscreen={true} />);
+
+        setTimeout(function() {
+
+            wrapper.update();
+
+            let wrappedComponent = wrapper.children().first();
+            let enhancedProps = wrappedComponent.props();
+
+            expect(enhancedProps.isFullscreen).toBe(true);
+            expect(enhancedProps.isPseudoFullscreen).toBe(true);
+
+            done();
+        }, 515);
     });
 
     it('should call this.props.onFullscreenChange when state.isFullscreen changes even when in pseudoFullscreen', function(done) {

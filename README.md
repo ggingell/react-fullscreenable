@@ -4,6 +4,10 @@
 
 Recent changes:
 
+* **v2.4.0** - Feature: Component now accepts prop isPseudoFullscreen that will immediately enter
+                    into pseudoFullscreen when passed as true. This cannot work with native fullscreen
+                    since that requires a user-generated event in order for the request to be fulfilled
+                    by the browser.
 * **v2.3.1** - Bugfix: Component now disposes of event handlers and inline styles during componentWillUnmount()
                     that would otherwise leak if component was unmounted while in pseudo fullscreen.
 * **v2.3.0** - Component now accepts a callback function as optional prop `onFullscreenChange` that will be called
@@ -69,7 +73,7 @@ Make these changes in the component you want to enhance with fullscreen. In thes
     ```
 
 Also take a look at [./example/demo.css](./example/demo.css). No CSS is required for this component to function
-correctly. However you will probably want rules for some child elements. Additionally this module does not do much to stop window scrolling mostly because I have not found the perfect solution to it yet, so I leave it free for you to implement. You can get pretty close with CSS and media queries.
+correctly. However you will probably want rules for some child elements. demo.css is a good starting point.
 
 ## Development
 

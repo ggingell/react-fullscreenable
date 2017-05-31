@@ -41,6 +41,7 @@ export default function withFullscreen({
 
                 this.state = {
                     isFullscreen: false,
+                    isPseudoFullscreen: false,
                     isAvailable,
                     isEnabled,
                     isNativeCapable: (isAvailable && isEnabled),
@@ -51,10 +52,19 @@ export default function withFullscreen({
 
             componentDidMount() {
 
-                if(this.state.isNativeCapable && !this.props.forcePseudoFullscreen) {
+                const {
+                    isPseudoFullscreen
+                } = this.props;
+
+                if(this.state.isNativeCapable
+                        && !this.props.forcePseudoFullscreen
+                        && !isPseudoFullscreen) {
                     this.fs = this.attachNativeFullscreen();
                 } else {
                     this.fs = this.attachPseudoFullscreen();
+                    if (isPseudoFullscreen) {
+                        this.fs.request();
+                    }
                 }
             }
 
@@ -265,6 +275,7 @@ export default function withFullscreen({
 
         Fullscreenable.propTypes = {
             forcePseudoFullscreen: PropTypes.bool,
+            isPseudoFullscreen: PropTypes.bool,
             onFullscreenChange: PropTypes.func
         }
 
