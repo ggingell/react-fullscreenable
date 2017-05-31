@@ -4,6 +4,8 @@
 
 Recent changes:
 
+* **v2.3.1** - Bugfix: Component now disposes of event handlers and inline styles during componentWillUnmount()
+                    that would otherwise leak if component was unmounted while in pseudo fullscreen.
 * **v2.3.0** - Component now accepts a callback function as optional prop `onFullscreenChange` that will be called
                     whenever fullscreen is entered or exited.
 * **v2.2.1** - Now using `prop-types` npm module to be compatible with React beyond 15.5.

@@ -37,6 +37,7 @@ export default function withFullscreen({
                 this.handleResize = this.handleResize.bind(this);
                 this.handleOrntChange = this.handleOrntChange.bind(this);
                 this.listenTouchMove = this.listenTouchMove.bind(this);
+                this.disposePseudoFullscreen = this.disposePseudoFullscreen.bind(this);
 
                 this.state = {
                     isFullscreen: false,
@@ -134,13 +135,7 @@ export default function withFullscreen({
                         });
                     },
                     release: () => {
-                        window.removeEventListener('resize', this.handleResize);
-                        window.removeEventListener('orientationchange', this.handleOrntChange);
-
-                        window.document.body.style.position = this.bodyPosOrig || '';
-                        window.document.body.style.margin = this.bodyMarginOrig;
-
-                        window.scrollTo(0, this.state.scrollYStart);
+                        this.disposePseudoFullscreen();
 
                         this.setState({
                             isPseudoFullscreen: false,
@@ -150,10 +145,20 @@ export default function withFullscreen({
                             this.props.onFullscreenChange(false);
                         });
                     },
-                    // noop for now. May be useful if event listeners are ever required
-                    // during the attachPseudoFullscreen() call itself.
-                    dispose: noop
+                    dispose: () => {
+                        this.disposePseudoFullscreen();
+                    }
                 }
+            }
+
+            disposePseudoFullscreen() {
+                window.removeEventListener('resize', this.handleResize);
+                window.removeEventListener('orientationchange', this.handleOrntChange);
+
+                window.document.body.style.position = this.bodyPosOrig || '';
+                window.document.body.style.margin = this.bodyMarginOrig;
+
+                window.scrollTo(0, this.state.scrollYStart);
             }
 
             handleResize() {

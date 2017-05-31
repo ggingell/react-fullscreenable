@@ -448,6 +448,25 @@ describe('Fullscreenable when fullscreen is not available', () => {
             }, 515);
         }, 515);
     });
+
+    it('should call .dispose() on this.fs when unmounted', function (done) {
+        let EnhancedComponent = Fullscreenable()(TestComponent);
+        const wrapper = mount(<EnhancedComponent />);
+        const toggleButton = wrapper.find('.toggle-button');
+        const inst = wrapper.instance();
+
+        const disposePseudoFullscreenSpy = jest.spyOn(inst, 'disposePseudoFullscreen');
+
+        toggleButton.simulate('click');
+
+        setTimeout(function() {
+            wrapper.unmount();
+
+            expect(disposePseudoFullscreenSpy).toHaveBeenCalledTimes(1);
+
+            done();
+        });
+    });
 });
 
 describe('Fullscreenable when fullscreen is not enabled', () => {
