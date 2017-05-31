@@ -4,6 +4,9 @@
 
 Recent changes:
 
+* **v2.3.0** - Component now accepts a callback function as optional prop `onFullscreenChange` that will be called
+                    whenever fullscreen is entered or exited.
+* **v2.2.1** - Now using `prop-types` npm module to be compatible with React beyond 15.5.
 * **v2.2.0** - Component now sets body style to prevent scrolling document in background.
              - Fixed issue where TouchMove events that made it to the component would be prevented,
                     which caused jitter during native scroll.
