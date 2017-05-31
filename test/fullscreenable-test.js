@@ -135,6 +135,35 @@ describe('Fullscreenable when native fullscreen is enabled and available', () =>
             }, 515);
         }, 515);
     });
+
+    it('should call this.props.onFullscreenChange when state.isFullscreen changes', function(done) {
+        let EnhancedComponent = Fullscreenable()(TestComponent);
+        const onFullscreenChangeSpy = jest.fn();
+
+        const wrapper = mount(<EnhancedComponent
+            onFullscreenChange={onFullscreenChangeSpy} />);
+        const toggleButton = wrapper.find('.toggle-button');
+
+        toggleButton.simulate('click');
+
+        setTimeout(function() {
+
+            expect(onFullscreenChangeSpy).toHaveBeenCalledTimes(1);
+            expect(onFullscreenChangeSpy.mock.calls[0][0]).toEqual(true);
+
+            toggleButton.simulate('click');
+
+            setTimeout(function() {
+
+                wrapper.update();
+
+                expect(onFullscreenChangeSpy).toHaveBeenCalledTimes(2);
+                expect(onFullscreenChangeSpy.mock.calls[1][0]).toEqual(false);
+
+                done();
+            }, 515);
+        }, 515);
+    });
 });
 
 describe('Fullscreenable when an error occurs', () => {
@@ -386,6 +415,38 @@ describe('Fullscreenable when fullscreen is not available', () => {
 
             done();
         }, 416);
+    });
+
+    it('should call this.props.onFullscreenChange when state.isFullscreen changes even when in pseudoFullscreen', function(done) {
+        let EnhancedComponent = Fullscreenable()(TestComponent);
+        const onFullscreenChangeSpy = jest.fn();
+
+        mockGetVD.mockReturnValue({"height": 1024, "width": 768})
+
+        const wrapper = mount(<EnhancedComponent
+            forcePseudoFullscreen={true}
+            onFullscreenChange={onFullscreenChangeSpy} />);
+        const toggleButton = wrapper.find('.toggle-button');
+
+        toggleButton.simulate('click');
+
+        setTimeout(function() {
+
+            expect(onFullscreenChangeSpy).toHaveBeenCalledTimes(1);
+            expect(onFullscreenChangeSpy.mock.calls[0][0]).toEqual(true);
+
+            toggleButton.simulate('click');
+
+            setTimeout(function() {
+
+                wrapper.update();
+
+                expect(onFullscreenChangeSpy).toHaveBeenCalledTimes(2);
+                expect(onFullscreenChangeSpy.mock.calls[1][0]).toEqual(false);
+
+                done();
+            }, 515);
+        }, 515);
     });
 });
 

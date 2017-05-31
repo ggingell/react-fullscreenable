@@ -73,6 +73,8 @@ export default function withFullscreen({
                         this.setState({
                             isFullscreen: true,
                             viewportDimensions: getViewportDimensions()
+                        }, () => {
+                            this.props.onFullscreenChange(true);
                         });
                     }, 500);
                 });
@@ -84,6 +86,8 @@ export default function withFullscreen({
                     this.setState({
                         isFullscreen: false,
                         viewportDimensions: null
+                    }, () => {
+                        this.props.onFullscreenChange(false);
                     });
                 });
 
@@ -125,6 +129,8 @@ export default function withFullscreen({
                             isPseudoFullscreen: true,
                             viewportDimensions: getViewportDimensions(),
                             scrollYStart: scrawly
+                        }, () => {
+                            this.props.onFullscreenChange(true);
                         });
                     },
                     release: () => {
@@ -140,6 +146,8 @@ export default function withFullscreen({
                             isPseudoFullscreen: false,
                             viewportDimensions: null,
                             scrollYStart: this.state.scrollYStart
+                        }, () => {
+                            this.props.onFullscreenChange(false);
                         });
                     },
                     // noop for now. May be useful if event listeners are ever required
@@ -251,7 +259,12 @@ export default function withFullscreen({
         Fullscreenable.displayName = `Fullscreenable(${getDisplayName(WrappedComponent)})`;
 
         Fullscreenable.propTypes = {
-            forcePseudoFullscreen: PropTypes.bool
+            forcePseudoFullscreen: PropTypes.bool,
+            onFullscreenChange: PropTypes.func
+        }
+
+        Fullscreenable.defaultProps = {
+            onFullscreenChange: () => {}
         }
 
         return Fullscreenable;
