@@ -32,11 +32,13 @@ export default function withFullscreen({
                 }
 
                 this.handleRootNodeRef = this.handleRootNodeRef.bind(this);
-                this.onFullscreenClick = this.onFullscreenClick.bind(this);
-
+                this.handleToggleFullscreen = this.handleToggleFullscreen.bind(this);
                 this.handleResize = this.handleResize.bind(this);
+                // orientation change
                 this.handleOrntChange = this.handleOrntChange.bind(this);
+                // ignore touch events
                 this.listenTouchMove = this.listenTouchMove.bind(this);
+
                 this.disposePseudoFullscreen = this.disposePseudoFullscreen.bind(this);
 
                 this.state = {
@@ -195,7 +197,7 @@ export default function withFullscreen({
                 this.rootNode = findDOMNode(ref);
             }
 
-            onFullscreenClick() {
+            handleToggleFullscreen() {
                 const {
                     isFullscreen,
                     isPseudoFullscreen
@@ -263,7 +265,7 @@ export default function withFullscreen({
                          onTouchMove={listenTouchMove}
                          ref={this.handleRootNodeRef}>
                         <WrappedComponent {...this.props}
-                                          toggleFullscreen={this.onFullscreenClick}
+                                          toggleFullscreen={this.handleToggleFullscreen}
                                           isFullscreen={Boolean(isFullscreen || isPseudoFullscreen)}
                                           viewportDimensions={viewportDimensions} />
                     </div>
