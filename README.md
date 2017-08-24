@@ -4,20 +4,24 @@
 
 Recent changes:
 
-* **v2.4.0** - Feature: Component now accepts prop isPseudoFullscreen that will immediately enter
+* **issue2** - Tag release fix for [issue #2](https://github.com/ggingell/react-fullscreenable/issues/2). Install manually (see below). Update issue #2 or create a new one as needed. Any feedback appreciated!
+
+    `npm i react-fullscreenable@issue2`
+
+* **2.4.0** - Feature: Component now accepts prop isPseudoFullscreen that will immediately enter
                     into pseudoFullscreen when passed as true. This cannot work with native fullscreen
                     since that requires a user-generated event in order for the request to be fulfilled
                     by the browser.
-* **v2.3.1** - Bugfix: Component now disposes of event handlers and inline styles during componentWillUnmount()
+* **2.3.1** - Bugfix: Component now disposes of event handlers and inline styles during componentWillUnmount()
                     that would otherwise leak if component was unmounted while in pseudo fullscreen.
-* **v2.3.0** - Component now accepts a callback function as optional prop `onFullscreenChange` that will be called
+* **2.3.0** - Component now accepts a callback function as optional prop `onFullscreenChange` that will be called
                     whenever fullscreen is entered or exited.
-* **v2.2.1** - Now using `prop-types` npm module to be compatible with React beyond 15.5.
-* **v2.2.0** - Component now sets body style to prevent scrolling document in background.
+* **2.2.1** - Now using `prop-types` npm module to be compatible with React beyond 15.5.
+* **2.2.0** - Component now sets body style to prevent scrolling document in background.
              - Fixed issue where TouchMove events that made it to the component would be prevented,
                     which caused jitter during native scroll.
              - Fixed bug where scrollY was not restored in pseudo fullscreen.
-* **v2.1.1** - Now Universal. Added DOM check before checking if native fullscreen is available on document.
+* **2.1.1** - Now Universal. Added DOM check before checking if native fullscreen is available on document.
 
 ## Usage
 
