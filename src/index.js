@@ -78,18 +78,25 @@ export default function withFullscreen({
                     this.rootNode.style.height = '100%';
                     this.rootNode.style.width = '100%';
 
+                    // Set state immediately to avoid race condition with pressing Escape key
+                    this.setState({
+                        isFullscreen: true
+                    }, () => {
+                        this.props.onFullscreenChange(true);
+                    });
+
                     // Delay is necessary in order to be able to get the
                     // correct dimensions of the window. If we update too soon
                     // the values reported by innerHeight and innerWidth are
                     // incorrect.
                     setTimeout(() => {
-                        this.setState({
-                            isFullscreen: true,
-                            viewportDimensions: getViewportDimensions()
-                        }, () => {
-                            this.props.onFullscreenChange(true);
-                        });
-                    }, 500);
+                        if (this.state.isFullscreen) {
+                            this.setState({
+                                viewportDimensions: getViewportDimensions()
+                            });
+                        }
+                    }, 300);
+
                 });
 
                 emitter.on('release', () => {
