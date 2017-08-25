@@ -4,9 +4,7 @@
 
 Recent changes:
 
-* **issue2** - Tag release fix for [issue #2](https://github.com/ggingell/react-fullscreenable/issues/2). Install manually (see below). Update issue #2 or create a new one as needed. Any feedback appreciated!
-
-    `npm i react-fullscreenable@issue2`
+* **2.4.2** - Fix for [issue #2](https://github.com/ggingell/react-fullscreenable/issues/2). Update issue #2 or create a new one as needed if this is causing issues for you. Any feedback appreciated!
 
 * **2.4.0** - Feature: Component now accepts prop isPseudoFullscreen that will immediately enter
                     into pseudoFullscreen when passed as true. This cannot work with native fullscreen
