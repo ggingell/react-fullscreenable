@@ -2,23 +2,32 @@
 
 > This is a [higher order component](https://facebook.github.io/react/docs/higher-order-components.html) that enhances any component with props that allow it to enter native fullscreen.
 
-Recent changes:
+## Changelog
 
-* **2.4.2** - Fix for [issue #2](https://github.com/ggingell/react-fullscreenable/issues/2). Update issue #2 or create a new one as needed if this is causing issues for you. Any feedback appreciated!
+* **2.4.3** - Fox for [issue #3](https://github.com/ggingell/react-fullscreenable/issues/3).
+              Native fullscreen detection fixed in Firefox.
+
+* **2.4.2** - Fix for [issue #2](https://github.com/ggingell/react-fullscreenable/issues/2).
+              Update issue #2 or create a new one as needed if this is causing issues for you. Any feedback appreciated!
 
 * **2.4.0** - Feature: Component now accepts prop isPseudoFullscreen that will immediately enter
                     into pseudoFullscreen when passed as true. This cannot work with native fullscreen
                     since that requires a user-generated event in order for the request to be fulfilled
                     by the browser.
+
 * **2.3.1** - Bugfix: Component now disposes of event handlers and inline styles during componentWillUnmount()
                     that would otherwise leak if component was unmounted while in pseudo fullscreen.
+
 * **2.3.0** - Component now accepts a callback function as optional prop `onFullscreenChange` that will be called
                     whenever fullscreen is entered or exited.
+
 * **2.2.1** - Now using `prop-types` npm module to be compatible with React beyond 15.5.
+
 * **2.2.0** - Component now sets body style to prevent scrolling document in background.
-             - Fixed issue where TouchMove events that made it to the component would be prevented,
+            - Fixed issue where TouchMove events that made it to the component would be prevented,
                     which caused jitter during native scroll.
-             - Fixed bug where scrollY was not restored in pseudo fullscreen.
+            - Fixed bug where scrollY was not restored in pseudo fullscreen.
+
 * **2.1.1** - Now Universal. Added DOM check before checking if native fullscreen is available on document.
 
 ## Usage
@@ -79,16 +88,19 @@ correctly. However you will probably want rules for some child elements. demo.cs
 
 ## Development
 
-    npm i
-
-    npm run start
+```
+npm i
+npm run start
+```
 
 Your browser should open to the live demo page.
 
 ## Testing
 
-    Tests are written with Jest and Enzyme.
+Tests are written with Jest and Enzyme.
 
-    npm t
+```
+npm t
+```
 
 > grantgi@zillowgroup.com
