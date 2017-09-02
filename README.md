@@ -4,7 +4,7 @@
 
 ## Changelog
 
-* **2.4.3** - Fox for [issue #3](https://github.com/ggingell/react-fullscreenable/issues/3).
+* **2.4.3** - Fix for [issue #3](https://github.com/ggingell/react-fullscreenable/issues/3).
               Native fullscreen detection fixed in Firefox.
 
 * **2.4.2** - Fix for [issue #2](https://github.com/ggingell/react-fullscreenable/issues/2).
