@@ -60,7 +60,10 @@ body {
 .fullscreenable {}
 
 /* The fullscreen class is added when the component is in native fullscreen. */
-.fullscreenable.fullscreen {}
+.fullscreenable.fullscreen {
+    /* At least in Firefox, native fullscreen requires a background color */
+    background: #FFF;
+}
 
 /* Added when native fullscreen is disabled. */
 .fullscreenable.fullscreen_disabled {}
