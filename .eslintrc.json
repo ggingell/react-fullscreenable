@@ -14,11 +14,10 @@
         "es6": true
     },
     "rules": {
-        "indent": ["error", 4],
-        "no-console": [0]
+        "indent": ["error", 4, { "SwitchCase": 1 }],
+        "no-console": [0],
+        "comma-dangle": ["error", "always-multiline"]
     },
-    "plugins": [
-        "react"
-    ],
+    "plugins": ["react"],
     "root": true
 }
