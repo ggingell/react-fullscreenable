@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import Fullscreenable from '../src/';
 
 export class DemoComponent extends Component {
-
     componentWillReceiveProps(nextProps) {
         if (this.props.isFullscreen !== nextProps.isFullscreen) {
             // Fullscreen status has changed.
@@ -11,13 +10,9 @@ export class DemoComponent extends Component {
     }
 
     render() {
+        const { isFullscreen, toggleFullscreen } = this.props;
 
-        const {
-            isFullscreen,
-            toggleFullscreen
-        } = this.props;
-
-        const buttonLabel = (isFullscreen) ? 'Exit Fullscreen' : 'Enter Fullscreen';
+        const buttonLabel = isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen';
 
         const toggleButton = <button onClick={toggleFullscreen}>{buttonLabel}</button>;
 
@@ -41,7 +36,7 @@ DemoComponent.displayName = 'DemoComponent';
 DemoComponent.propTypes = {
     isFullscreen: PropTypes.bool,
     toggleFullscreen: PropTypes.func,
-    viewportDimensions: PropTypes.object
+    viewportDimensions: PropTypes.object,
 };
 
 const FullscreenableDemoComponent = Fullscreenable()(DemoComponent);

@@ -12,7 +12,7 @@ import deepEqual from 'deep-equal';
 
 import Fullscreenable from '../src/';
 
-const TestComponent = (props) => {
+const TestComponent = props => {
     return (
         <div className="test-component">
             <button className="toggle-button" onClick={props.toggleFullscreen}>
@@ -21,15 +21,13 @@ const TestComponent = (props) => {
             <div className="flag">{props.isFullscreen}</div>
         </div>
     );
-}
+};
 TestComponent.propTypes = {
     toggleFullscreen: PropTypes.func,
-    isFullscreen: PropTypes.bool
-}
-
+    isFullscreen: PropTypes.bool,
+};
 
 describe('Fullscreenable when native fullscreen is enabled and available', () => {
-
     beforeEach(() => {
         jest.resetAllMocks();
         const mocked = require('fullscreen');
@@ -44,7 +42,7 @@ describe('Fullscreenable when native fullscreen is enabled and available', () =>
 
     it('should compose a display name based on the wrapped component', () => {
         let EnhancedComponent = Fullscreenable()(TestComponent);
-        expect(EnhancedComponent.displayName).toBe("Fullscreenable(TestComponent)");
+        expect(EnhancedComponent.displayName).toBe('Fullscreenable(TestComponent)');
     });
 
     it('should add three props to the wrapped component', () => {
@@ -61,18 +59,16 @@ describe('Fullscreenable when native fullscreen is enabled and available', () =>
         expect(enhancedProps.isFullscreen).toBe(false);
 
         expect(enhancedProps.viewportDimensions).toBeNull();
-
     });
 
     it('should pass other props along', () => {
         let EnhancedComponent = Fullscreenable()(TestComponent);
         const unrelatedProp = { testing: true, leaveMeAlone: true };
-        const wrapper = mount(<EnhancedComponent unrelatedProp={unrelatedProp}/>);
+        const wrapper = mount(<EnhancedComponent unrelatedProp={unrelatedProp} />);
         const wrappedComponent = wrapper.children().first();
         const enhancedProps = wrappedComponent.props();
 
         expect(deepEqual(enhancedProps.unrelatedProp, unrelatedProp)).toBe(true);
-
     });
 
     it('should have appropriate classes on its root node', () => {
@@ -93,7 +89,6 @@ describe('Fullscreenable when native fullscreen is enabled and available', () =>
         toggleButton.simulate('click');
 
         setTimeout(function() {
-
             wrapper.update();
 
             const wrappedComponent = wrapper.children().first();
@@ -102,7 +97,6 @@ describe('Fullscreenable when native fullscreen is enabled and available', () =>
             expect(enhancedProps.isFullscreen).toBe(true);
 
             done();
-
         }, 515);
     });
 
@@ -114,7 +108,6 @@ describe('Fullscreenable when native fullscreen is enabled and available', () =>
         toggleButton.simulate('click');
 
         setTimeout(function() {
-
             const wrappedComponent = wrapper.children().first();
             const enhancedProps = wrappedComponent.props();
 
@@ -123,7 +116,6 @@ describe('Fullscreenable when native fullscreen is enabled and available', () =>
             toggleButton.simulate('click');
 
             setTimeout(function() {
-
                 wrapper.update();
 
                 const wrappedComponent = wrapper.children().first();
@@ -140,21 +132,18 @@ describe('Fullscreenable when native fullscreen is enabled and available', () =>
         let EnhancedComponent = Fullscreenable()(TestComponent);
         const onFullscreenChangeSpy = jest.fn();
 
-        const wrapper = mount(<EnhancedComponent
-            onFullscreenChange={onFullscreenChangeSpy} />);
+        const wrapper = mount(<EnhancedComponent onFullscreenChange={onFullscreenChangeSpy} />);
         const toggleButton = wrapper.find('.toggle-button');
 
         toggleButton.simulate('click');
 
         setTimeout(function() {
-
             expect(onFullscreenChangeSpy).toHaveBeenCalledTimes(1);
             expect(onFullscreenChangeSpy.mock.calls[0][0]).toEqual(true);
 
             toggleButton.simulate('click');
 
             setTimeout(function() {
-
                 wrapper.update();
 
                 expect(onFullscreenChangeSpy).toHaveBeenCalledTimes(2);
@@ -167,7 +156,6 @@ describe('Fullscreenable when native fullscreen is enabled and available', () =>
 });
 
 describe('Fullscreenable when an error occurs', () => {
-
     beforeEach(() => {
         jest.resetAllMocks();
         const mocked = require('fullscreen');
@@ -198,7 +186,7 @@ describe('Fullscreenable when an error occurs', () => {
     it('should call the onError callback', function(done) {
         const errorCbSpy = jest.fn();
         let EnhancedComponent = Fullscreenable({
-            onError: errorCbSpy
+            onError: errorCbSpy,
         })(TestComponent);
 
         const wrapper = mount(<EnhancedComponent />);
@@ -220,7 +208,6 @@ describe('Fullscreenable when an error occurs', () => {
 });
 
 describe('Fullscreenable when unmounted', () => {
-
     it('should call .dispose() on this.fs', () => {
         jest.resetAllMocks();
         const mocked = require('fullscreen');
@@ -249,8 +236,7 @@ describe('Fullscreenable when fullscreen is not available', () => {
         mocked.__setAvailable(false);
         mocked.__setEnabled(false);
         mockGetVD = require('../src/getViewportDimensions');
-        mockGetVD.mockReturnValue({width: 1024, height: 768});
-
+        mockGetVD.mockReturnValue({ width: 1024, height: 768 });
     });
 
     it('should have fullscreen_disabled class on its root node', () => {
@@ -275,8 +261,7 @@ describe('Fullscreenable when fullscreen is not available', () => {
         const enhancedProps = wrappedComponent.props();
 
         expect(enhancedProps.isFullscreen).toBe(true);
-        expect(enhancedProps.viewportDimensions).toEqual({width: 1024, height: 768});
-
+        expect(enhancedProps.viewportDimensions).toEqual({ width: 1024, height: 768 });
     });
 
     it('should have appropriate classes when in pseudo fullscreen', function() {
@@ -292,7 +277,6 @@ describe('Fullscreenable when fullscreen is not available', () => {
         expect(wrapper.hasClass('fullscreen')).toBe(true);
         expect(wrapper.hasClass('fullscreen_disabled')).toBe(true);
         expect(wrapper.hasClass('fullscreen_pseudo')).toBe(true);
-
     });
 
     // it('should swallow TouchMove events when in pseudo fullscreen (call preventDefault())', function() {
@@ -325,7 +309,7 @@ describe('Fullscreenable when fullscreen is not available', () => {
 
         wrapper.update();
 
-        mockGetVD.mockReturnValue({"height": 1440, "width": 2560});
+        mockGetVD.mockReturnValue({ height: 1440, width: 2560 });
 
         wrapper.simulate('touchmove');
 
@@ -333,7 +317,9 @@ describe('Fullscreenable when fullscreen is not available', () => {
 
         expect(setStateSpy).toHaveBeenCalledTimes(2);
 
-        expect(setStateSpy.mock.calls[1][0]).toEqual({ "viewportDimensions": {"height": 1440, "width": 2560} });
+        expect(setStateSpy.mock.calls[1][0]).toEqual({
+            viewportDimensions: { height: 1440, width: 2560 },
+        });
     });
 
     it('should release pseudo fullscreen when toggleFullscreen is called', () => {
@@ -350,7 +336,7 @@ describe('Fullscreenable when fullscreen is not available', () => {
         let enhancedProps = wrappedComponent.props();
 
         expect(enhancedProps.isFullscreen).toBe(true);
-        expect(enhancedProps.viewportDimensions).toEqual({width: 1024, height: 768});
+        expect(enhancedProps.viewportDimensions).toEqual({ width: 1024, height: 768 });
 
         toggleButton.simulate('click');
 
@@ -379,14 +365,16 @@ describe('Fullscreenable when fullscreen is not available', () => {
         inst.handleResize();
 
         // Simulate the window getting larger
-        mockGetVD.mockReturnValue({"height": 1440, "width": 900})
+        mockGetVD.mockReturnValue({ height: 1440, width: 900 });
 
         inst.handleResize();
 
         wrapper.update();
 
         expect(setStateSpy).toHaveBeenCalledTimes(3);
-        expect(setStateSpy.mock.calls[2][0]).toEqual({ "viewportDimensions": {"height": 1440, "width": 900} });
+        expect(setStateSpy.mock.calls[2][0]).toEqual({
+            viewportDimensions: { height: 1440, width: 900 },
+        });
     });
 
     it('should call setState when its handleOrntChange is called', function(done) {
@@ -402,7 +390,7 @@ describe('Fullscreenable when fullscreen is not available', () => {
         // Update wrapper to be in pseudo fullscreen effect
         wrapper.update();
 
-        mockGetVD.mockReturnValue({"height": 1024, "width": 768})
+        mockGetVD.mockReturnValue({ height: 1024, width: 768 });
 
         inst.handleOrntChange();
 
@@ -410,18 +398,19 @@ describe('Fullscreenable when fullscreen is not available', () => {
             wrapper.update();
 
             expect(setStateSpy).toHaveBeenCalledTimes(2);
-            expect(setStateSpy.mock.calls[1][0]).toEqual({ "viewportDimensions": {"height": 1024, "width": 768} });
+            expect(setStateSpy.mock.calls[1][0]).toEqual({
+                viewportDimensions: { height: 1024, width: 768 },
+            });
 
             done();
         }, 416);
     });
 
-    it('should immediately call fullscreen.request() if isPseudoFullscreen prop is passed as true', function (done) {
+    it('should immediately call fullscreen.request() if isPseudoFullscreen prop is passed as true', function(done) {
         let EnhancedComponent = Fullscreenable()(TestComponent);
         const wrapper = mount(<EnhancedComponent isPseudoFullscreen={true} />);
 
         setTimeout(function() {
-
             wrapper.update();
 
             let wrappedComponent = wrapper.children().first();
@@ -438,24 +427,25 @@ describe('Fullscreenable when fullscreen is not available', () => {
         let EnhancedComponent = Fullscreenable()(TestComponent);
         const onFullscreenChangeSpy = jest.fn();
 
-        mockGetVD.mockReturnValue({"height": 1024, "width": 768})
+        mockGetVD.mockReturnValue({ height: 1024, width: 768 });
 
-        const wrapper = mount(<EnhancedComponent
-            forcePseudoFullscreen={true}
-            onFullscreenChange={onFullscreenChangeSpy} />);
+        const wrapper = mount(
+            <EnhancedComponent
+                forcePseudoFullscreen={true}
+                onFullscreenChange={onFullscreenChangeSpy}
+            />
+        );
         const toggleButton = wrapper.find('.toggle-button');
 
         toggleButton.simulate('click');
 
         setTimeout(function() {
-
             expect(onFullscreenChangeSpy).toHaveBeenCalledTimes(1);
             expect(onFullscreenChangeSpy.mock.calls[0][0]).toEqual(true);
 
             toggleButton.simulate('click');
 
             setTimeout(function() {
-
                 wrapper.update();
 
                 expect(onFullscreenChangeSpy).toHaveBeenCalledTimes(2);
@@ -466,7 +456,7 @@ describe('Fullscreenable when fullscreen is not available', () => {
         }, 515);
     });
 
-    it('should call .dispose() on this.fs when unmounted', function (done) {
+    it('should call .dispose() on this.fs when unmounted', function(done) {
         let EnhancedComponent = Fullscreenable()(TestComponent);
         const wrapper = mount(<EnhancedComponent />);
         const toggleButton = wrapper.find('.toggle-button');
@@ -487,7 +477,6 @@ describe('Fullscreenable when fullscreen is not available', () => {
 });
 
 describe('Fullscreenable when fullscreen is not enabled', () => {
-
     beforeEach(() => {
         jest.resetAllMocks();
         const mocked = require('fullscreen');

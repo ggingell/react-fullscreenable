@@ -8,18 +8,13 @@ import getDisplayName from 'react-display-name';
 import classNames from 'classnames';
 
 import getViewportDimensions from './getViewportDimensions';
-const CAN_HAS_DOM = (typeof window !== 'undefined'
-                     && window.document
-                     && window.document.createElement);
+const CAN_HAS_DOM =
+    typeof window !== 'undefined' && window.document && window.document.createElement;
 
 const noop = () => {};
 
-export default function withFullscreen({
-        onError = noop
-    } = {}) {
-
-    return (WrappedComponent) => {
-
+export default function withFullscreen({ onError = noop } = {}) {
+    return WrappedComponent => {
         class Fullscreenable extends Component {
             constructor(props) {
                 super(props);
@@ -46,21 +41,20 @@ export default function withFullscreen({
                     isPseudoFullscreen: false,
                     isAvailable,
                     isEnabled,
-                    isNativeCapable: (isAvailable && isEnabled),
+                    isNativeCapable: isAvailable && isEnabled,
                     viewportDimensions: null,
-                    scrollYStart: 0
+                    scrollYStart: 0,
                 };
             }
 
             componentDidMount() {
+                const { isPseudoFullscreen } = this.props;
 
-                const {
-                    isPseudoFullscreen
-                } = this.props;
-
-                if(this.state.isNativeCapable
-                        && !this.props.forcePseudoFullscreen
-                        && !isPseudoFullscreen) {
+                if (
+                    this.state.isNativeCapable &&
+                    !this.props.forcePseudoFullscreen &&
+                    !isPseudoFullscreen
+                ) {
                     this.fs = this.attachNativeFullscreen();
                 } else {
                     this.fs = this.attachPseudoFullscreen();
@@ -71,7 +65,6 @@ export default function withFullscreen({
             }
 
             attachNativeFullscreen() {
-
                 const emitter = fullscreen(this.rootNode);
 
                 emitter.on('attain', () => {
@@ -79,11 +72,14 @@ export default function withFullscreen({
                     this.rootNode.style.width = '100%';
 
                     // Set state immediately to avoid race condition with pressing Escape key
-                    this.setState({
-                        isFullscreen: true
-                    }, () => {
-                        this.props.onFullscreenChange(true);
-                    });
+                    this.setState(
+                        {
+                            isFullscreen: true,
+                        },
+                        () => {
+                            this.props.onFullscreenChange(true);
+                        }
+                    );
 
                     // Delay is necessary in order to be able to get the
                     // correct dimensions of the window. If we update too soon
@@ -92,30 +88,31 @@ export default function withFullscreen({
                     setTimeout(() => {
                         if (this.state.isFullscreen) {
                             this.setState({
-                                viewportDimensions: getViewportDimensions()
+                                viewportDimensions: getViewportDimensions(),
                             });
                         }
                     }, 300);
-
                 });
 
                 emitter.on('release', () => {
                     this.rootNode.style.height = '';
                     this.rootNode.style.width = '';
 
-                    this.setState({
-                        isFullscreen: false,
-                        viewportDimensions: null
-                    }, () => {
-                        this.props.onFullscreenChange(false);
-                    });
+                    this.setState(
+                        {
+                            isFullscreen: false,
+                            viewportDimensions: null,
+                        },
+                        () => {
+                            this.props.onFullscreenChange(false);
+                        }
+                    );
                 });
 
-                emitter.on('error', (error) => {
-
+                emitter.on('error', error => {
                     this.setState({
                         isFullscreen: false,
-                        viewportDimensions: null
+                        viewportDimensions: null,
                     });
 
                     // You really only get onfullscreenerror when requesting
@@ -130,7 +127,6 @@ export default function withFullscreen({
             }
 
             attachPseudoFullscreen() {
-
                 return {
                     request: () => {
                         window.addEventListener('resize', this.handleResize);
@@ -145,29 +141,35 @@ export default function withFullscreen({
                         window.document.body.style.position = 'fixed';
                         window.document.body.style.margin = '0';
 
-                        this.setState({
-                            isPseudoFullscreen: true,
-                            viewportDimensions: getViewportDimensions(),
-                            scrollYStart: scrawly
-                        }, () => {
-                            this.props.onFullscreenChange(true);
-                        });
+                        this.setState(
+                            {
+                                isPseudoFullscreen: true,
+                                viewportDimensions: getViewportDimensions(),
+                                scrollYStart: scrawly,
+                            },
+                            () => {
+                                this.props.onFullscreenChange(true);
+                            }
+                        );
                     },
                     release: () => {
                         this.disposePseudoFullscreen();
 
-                        this.setState({
-                            isPseudoFullscreen: false,
-                            viewportDimensions: null,
-                            scrollYStart: this.state.scrollYStart
-                        }, () => {
-                            this.props.onFullscreenChange(false);
-                        });
+                        this.setState(
+                            {
+                                isPseudoFullscreen: false,
+                                viewportDimensions: null,
+                                scrollYStart: this.state.scrollYStart,
+                            },
+                            () => {
+                                this.props.onFullscreenChange(false);
+                            }
+                        );
                     },
                     dispose: () => {
                         this.disposePseudoFullscreen();
-                    }
-                }
+                    },
+                };
             }
 
             disposePseudoFullscreen() {
@@ -181,10 +183,9 @@ export default function withFullscreen({
             }
 
             handleResize() {
-
                 window.scrollTo(0, 0);
                 this.setState({
-                    viewportDimensions: getViewportDimensions()
+                    viewportDimensions: getViewportDimensions(),
                 });
             }
 
@@ -205,10 +206,7 @@ export default function withFullscreen({
             }
 
             handleToggleFullscreen() {
-                const {
-                    isFullscreen,
-                    isPseudoFullscreen
-                } = this.state;
+                const { isFullscreen, isPseudoFullscreen } = this.state;
 
                 if (isFullscreen || isPseudoFullscreen) {
                     this.fs.release();
@@ -218,7 +216,6 @@ export default function withFullscreen({
             }
 
             listenTouchMove() {
-
                 // If the user taps the top of the screen on an iPad or iPhone
                 // this can trigger the URL bar to show. However this does not
                 // fire a resize event. Instead, we check window size on
@@ -241,14 +238,14 @@ export default function withFullscreen({
                     isEnabled,
                     isPseudoFullscreen,
                     isFullscreen,
-                   viewportDimensions
+                    viewportDimensions,
                 } = this.state;
 
                 const wrapperClass = classNames({
-                    'fullscreenable': true,
-                    'fullscreen': (isFullscreen || isPseudoFullscreen),
-                    'fullscreen_disabled': !isEnabled,
-                    'fullscreen_pseudo': isPseudoFullscreen
+                    fullscreenable: true,
+                    fullscreen: isFullscreen || isPseudoFullscreen,
+                    fullscreen_disabled: !isEnabled,
+                    fullscreen_pseudo: isPseudoFullscreen,
                 });
 
                 let listenTouchMove;
@@ -262,19 +259,23 @@ export default function withFullscreen({
                         top: '0',
                         right: '0',
                         bottom: '0',
-                        left: '0'
-                    }
+                        left: '0',
+                    };
                 }
 
                 return (
-                    <div className={wrapperClass}
-                         style={style}
-                         onTouchMove={listenTouchMove}
-                         ref={this.handleRootNodeRef}>
-                        <WrappedComponent {...this.props}
-                                          toggleFullscreen={this.handleToggleFullscreen}
-                                          isFullscreen={Boolean(isFullscreen || isPseudoFullscreen)}
-                                          viewportDimensions={viewportDimensions} />
+                    <div
+                        className={wrapperClass}
+                        style={style}
+                        onTouchMove={listenTouchMove}
+                        ref={this.handleRootNodeRef}
+                    >
+                        <WrappedComponent
+                            {...this.props}
+                            toggleFullscreen={this.handleToggleFullscreen}
+                            isFullscreen={Boolean(isFullscreen || isPseudoFullscreen)}
+                            viewportDimensions={viewportDimensions}
+                        />
                     </div>
                 );
             }
@@ -285,12 +286,12 @@ export default function withFullscreen({
         Fullscreenable.propTypes = {
             forcePseudoFullscreen: PropTypes.bool,
             isPseudoFullscreen: PropTypes.bool,
-            onFullscreenChange: PropTypes.func
-        }
+            onFullscreenChange: PropTypes.func,
+        };
 
         Fullscreenable.defaultProps = {
-            onFullscreenChange: () => {}
-        }
+            onFullscreenChange: () => {},
+        };
 
         return Fullscreenable;
     };

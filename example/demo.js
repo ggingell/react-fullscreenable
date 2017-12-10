@@ -5,12 +5,13 @@ import DemoComponent from './DemoComponent';
 ReactDOM.render(
     <div>
         <pre>without forcePseudoFullscreen prop (default):</pre>
-        <DemoComponent onFullscreenChange={(isFullscreen) => {
-            console.log('onFullscreenChange demo callback > isFullscreen', isFullscreen);
-        }} />
+        <DemoComponent
+            onFullscreenChange={isFullscreen => {
+                console.log('onFullscreenChange demo callback > isFullscreen', isFullscreen);
+            }}
+        />
         <pre>with forcePseudoFullscreen = true:</pre>
-        <DemoComponent forcePseudoFullscreen={true}
-                       isPseudoFullscreen={false} />
+        <DemoComponent forcePseudoFullscreen={true} isPseudoFullscreen={false} />
     </div>,
     document.getElementById('stage')
 );

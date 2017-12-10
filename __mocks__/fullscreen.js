@@ -24,8 +24,8 @@ function fullscreen() {
         on: on,
         request: request,
         release: release,
-        dispose: disposeMock
-    }
+        dispose: disposeMock,
+    };
 }
 
 // The fullscreen event emitter only supports these event names:
@@ -46,7 +46,10 @@ function on(name, cb) {
     }
 
     if (validEvents.indexOf(name) < 0) {
-        console.error('Invalid event listener name supplied to fullscreen.on(...) should be one of ', validEvents);
+        console.error(
+            'Invalid event listener name supplied to fullscreen.on(...) should be one of ',
+            validEvents
+        );
     }
 
     listeners[name] = cb;
@@ -56,31 +59,27 @@ function request() {
     let cb = listeners['attain'];
 
     if (cb) {
-
         if (_simulateError) {
             let ecb = listeners['error'];
             if (ecb) {
-
                 ecb(new Error('Mock fullscreen error event message'));
-
             } else {
-                console.error('Fullscreen error occured but no listener was registered!')
+                console.error('Fullscreen error occured but no listener was registered!');
             }
         } else {
             process.nextTick(cb);
         }
     } else {
-        console.error('Fullscreen request() was called but no listener was registered!')
+        console.error('Fullscreen request() was called but no listener was registered!');
     }
 }
 
 function release() {
     let cb = listeners['release'];
     if (cb) {
-
         process.nextTick(cb);
     } else {
-        console.error('Fullscreen release() was called but no listener was registered!')
+        console.error('Fullscreen release() was called but no listener was registered!');
     }
 }
 
@@ -106,7 +105,6 @@ let disposeMock = jest.fn();
 function __getDisposeMock() {
     return disposeMock;
 }
-
 
 // Set test only helper setters
 fullscreen.__setSimulateError = __setSimulateError;
