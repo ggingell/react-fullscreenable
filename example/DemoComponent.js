@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Fullscreenable from '../src/';
+import withFullscreen from '../src/withFullscreen';
 
 export class DemoComponent extends Component {
     componentWillReceiveProps(nextProps) {
@@ -39,6 +39,6 @@ DemoComponent.propTypes = {
     viewportDimensions: PropTypes.object,
 };
 
-const FullscreenableDemoComponent = Fullscreenable()(DemoComponent);
+const FullscreenableDemoComponent = withFullscreen()(DemoComponent);
 
 export default FullscreenableDemoComponent;
