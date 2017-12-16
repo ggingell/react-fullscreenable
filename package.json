@@ -6,14 +6,14 @@
   "license": "ISC",
   "main": "lib/index.js",
   "scripts": {
-    "start": "budo example/demo.js:browserified/demo.js --dir example --onupdate \"npm run prettier && npm run build\" --watch-glob \"**/*.{html,css,js}\" --open --live -- -t [ babelify ] --sourceType module",
+    "start": "budo example/demo.js:browserified/demo.js --dir example --onupdate \"npm run lint\" --watch-glob \"**/*.{html,css,js}\" --open --live -- -t [ babelify ] --sourceType module",
     "pretest": "npm run lint",
     "prettier": "prettier --config .prettierrc --write '**/*.js'",
     "clean": "rimraf lib",
     "prebuild": "npm run clean && npm run lint && npm run test",
     "build": "babel src --out-dir lib",
     "test": "jest --coverage",
-    "lint": "prettier && eslint --cache demo.jsx src/*.jsx src/*.js",
+    "lint": "eslint --cache demo.jsx src/*.jsx src/*.js",
     "prepublish": "npm run lint --silent && npm t"
   },
   "files": [
