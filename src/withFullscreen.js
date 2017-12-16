@@ -5,6 +5,14 @@ import getDisplayName from 'react-display-name';
 import Fullscreen from './Fullscreen';
 
 const noop = () => {};
+const pick = (obj = {}, keys = []) => {
+    const result = {};
+    keys.forEach(key => {
+        result[key] = obj[key];
+    });
+
+    return result;
+};
 
 export default function withFullscreen({ onError = noop } = {}) {
     return WrappedComponent => {
@@ -14,7 +22,13 @@ export default function withFullscreen({ onError = noop } = {}) {
                     <Fullscreen
                         {...this.props}
                         onError={onError}
-                        render={(state, props) => {
+                        render={(_state, props) => {
+                            const state = pick(_state, [
+                                'isPseudoFullscreen',
+                                'isFullscreen',
+                                'viewportDimensions',
+                            ]);
+
                             return <WrappedComponent {...props} {...state} />;
                         }}
                     />

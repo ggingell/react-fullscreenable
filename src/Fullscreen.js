@@ -271,13 +271,6 @@ export default class Fullscreen extends Component {
             _render = children;
         }
 
-        const state = {
-            isEnabled,
-            isPseudoFullscreen,
-            isFullscreen,
-            viewportDimensions,
-        };
-
         const props = Object.assign(
             {},
             {
@@ -293,7 +286,7 @@ export default class Fullscreen extends Component {
                 onTouchMove={listenTouchMove}
                 ref={this.handleRootNodeRef}
             >
-                {_render(state, props)}
+                {_render(this.state, props)}
             </div>
         );
     }
