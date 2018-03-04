@@ -50,7 +50,7 @@ describe('Fullscreenable when native fullscreen is enabled and available', () =>
     it('should add three props to the wrapped component', () => {
         let EnhancedComponent = Fullscreenable()(TestComponent);
         const wrapper = mount(<EnhancedComponent />);
-        const wrappedComponent = wrapper.children().first();
+        const wrappedComponent = wrapper.children().children().first();
         const enhancedProps = wrappedComponent.props();
 
         expect(enhancedProps.toggleFullscreen).toBeDefined();
@@ -68,7 +68,7 @@ describe('Fullscreenable when native fullscreen is enabled and available', () =>
         let EnhancedComponent = Fullscreenable()(TestComponent);
         const unrelatedProp = { testing: true, leaveMeAlone: true };
         const wrapper = mount(<EnhancedComponent unrelatedProp={unrelatedProp}/>);
-        const wrappedComponent = wrapper.children().first();
+        const wrappedComponent = wrapper.children().children().first();
         const enhancedProps = wrappedComponent.props();
 
         expect(deepEqual(enhancedProps.unrelatedProp, unrelatedProp)).toBe(true);
@@ -77,7 +77,7 @@ describe('Fullscreenable when native fullscreen is enabled and available', () =>
 
     it('should have appropriate classes on its root node', () => {
         let EnhancedComponent = Fullscreenable()(TestComponent);
-        const wrapper = mount(<EnhancedComponent />);
+        const wrapper = mount(<EnhancedComponent />).children().first();
 
         expect(wrapper.hasClass('fullscreenable')).toBe(true);
         expect(wrapper.hasClass('fullscreen')).toBe(false);
@@ -96,7 +96,7 @@ describe('Fullscreenable when native fullscreen is enabled and available', () =>
 
             wrapper.update();
 
-            const wrappedComponent = wrapper.children().first();
+            const wrappedComponent = wrapper.children().children().first();
             const enhancedProps = wrappedComponent.props();
 
             expect(enhancedProps.isFullscreen).toBe(true);
@@ -115,7 +115,9 @@ describe('Fullscreenable when native fullscreen is enabled and available', () =>
 
         setTimeout(function() {
 
-            const wrappedComponent = wrapper.children().first();
+            wrapper.update();
+
+            const wrappedComponent = wrapper.children().children().first();
             const enhancedProps = wrappedComponent.props();
 
             expect(enhancedProps.isFullscreen).toBe(true);
@@ -126,7 +128,7 @@ describe('Fullscreenable when native fullscreen is enabled and available', () =>
 
                 wrapper.update();
 
-                const wrappedComponent = wrapper.children().first();
+                const wrappedComponent = wrapper.children().children().first();
                 const enhancedProps = wrappedComponent.props();
 
                 expect(enhancedProps.isFullscreen).toBe(false);
@@ -188,7 +190,7 @@ describe('Fullscreenable when an error occurs', () => {
         wrapper.update();
 
         setTimeout(() => {
-            const wrappedComponent = wrapper.children().first();
+            const wrappedComponent = wrapper.children().children().first();
             const enhancedProps = wrappedComponent.props();
             expect(enhancedProps.isFullscreen).toBe(false);
             done();
@@ -209,7 +211,7 @@ describe('Fullscreenable when an error occurs', () => {
         wrapper.update();
 
         setTimeout(() => {
-            const wrappedComponent = wrapper.children().first();
+            const wrappedComponent = wrapper.children().children().first();
             const enhancedProps = wrappedComponent.props();
             expect(errorCbSpy).toHaveBeenCalled();
             expect(errorCbSpy.mock.calls[0][0]).toBeInstanceOf(Error);
@@ -255,7 +257,7 @@ describe('Fullscreenable when fullscreen is not available', () => {
 
     it('should have fullscreen_disabled class on its root node', () => {
         let EnhancedComponent = Fullscreenable()(TestComponent);
-        const wrapper = mount(<EnhancedComponent />);
+        const wrapper = mount(<EnhancedComponent />).children().first();
 
         expect(wrapper.hasClass('fullscreenable')).toBe(true);
         expect(wrapper.hasClass('fullscreen')).toBe(false);
@@ -271,7 +273,7 @@ describe('Fullscreenable when fullscreen is not available', () => {
 
         wrapper.update();
 
-        const wrappedComponent = wrapper.children().first();
+        const wrappedComponent = wrapper.children().children().first();
         const enhancedProps = wrappedComponent.props();
 
         expect(enhancedProps.isFullscreen).toBe(true);
@@ -288,10 +290,11 @@ describe('Fullscreenable when fullscreen is not available', () => {
 
         wrapper.update();
 
-        expect(wrapper.hasClass('fullscreenable')).toBe(true);
-        expect(wrapper.hasClass('fullscreen')).toBe(true);
-        expect(wrapper.hasClass('fullscreen_disabled')).toBe(true);
-        expect(wrapper.hasClass('fullscreen_pseudo')).toBe(true);
+        const component = wrapper.children().first();
+        expect(component.hasClass('fullscreenable')).toBe(true);
+        expect(component.hasClass('fullscreen')).toBe(true);
+        expect(component.hasClass('fullscreen_disabled')).toBe(true);
+        expect(component.hasClass('fullscreen_pseudo')).toBe(true);
 
     });
 
@@ -346,7 +349,7 @@ describe('Fullscreenable when fullscreen is not available', () => {
         // Update wrapper to be in pseudo fullscreen effect
         wrapper.update();
 
-        let wrappedComponent = wrapper.children().first();
+        let wrappedComponent = wrapper.children().children().first();
         let enhancedProps = wrappedComponent.props();
 
         expect(enhancedProps.isFullscreen).toBe(true);
@@ -356,7 +359,7 @@ describe('Fullscreenable when fullscreen is not available', () => {
 
         wrapper.update();
 
-        wrappedComponent = wrapper.children().first();
+        wrappedComponent = wrapper.children().children().first();
         enhancedProps = wrappedComponent.props();
 
         expect(enhancedProps.isFullscreen).toBe(false);
@@ -424,7 +427,7 @@ describe('Fullscreenable when fullscreen is not available', () => {
 
             wrapper.update();
 
-            let wrappedComponent = wrapper.children().first();
+            let wrappedComponent = wrapper.children().children().first();
             let enhancedProps = wrappedComponent.props();
 
             expect(enhancedProps.isFullscreen).toBe(true);
@@ -498,7 +501,7 @@ describe('Fullscreenable when fullscreen is not enabled', () => {
 
     it('should have class fullscreen_disabled on its root node', () => {
         let EnhancedComponent = Fullscreenable()(TestComponent);
-        const wrapper = mount(<EnhancedComponent />);
+        const wrapper = mount(<EnhancedComponent />).children().first();
 
         expect(wrapper.hasClass('fullscreenable')).toBe(true);
         expect(wrapper.hasClass('fullscreen')).toBe(false);
