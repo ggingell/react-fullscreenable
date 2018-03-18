@@ -4,6 +4,8 @@
 
 ## Changelog
 
+* **2.5.0** - Package and test hygiene for React 16. Thanks [@schneidmaster](https://github.com/schneidmaster).
+
 * **2.4.3** - Fix for [issue #3](https://github.com/ggingell/react-fullscreenable/issues/3).
               Native fullscreen detection fixed in Firefox.
 
